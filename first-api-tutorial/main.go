@@ -28,6 +28,27 @@ func getBookById(id string) (*book, error) {
 	return nil, errors.New("book not found")
 }
 
+func checkoutBook(c *gin.Context) {
+	id, ok := c.GetQuery("id")
+	if ok == false {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Book not found."})
+		return 
+	}
+
+	book, err := getBookById(id)
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Book not found."})
+		return 
+	}
+
+	if book.Quantity == 0 {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Book not available."})
+		return 
+	}
+	book.Quantity--
+	c.IndentedJSON(http.StatusOK,book)
+}
+
 func bookById(c *gin.Context) {
 	id := c.Param("id")
 	book, err := getBookById(id)
@@ -59,5 +80,6 @@ func main() {
 	router.GET("/books", getBooks)
 	router.GET("/books/:id", bookById)
 	router.POST("/books", createBook)
+	router.PATCH("/checkout", checkoutBook)
 	router.Run("localhost:8000")
 }
