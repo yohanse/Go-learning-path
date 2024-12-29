@@ -10,7 +10,8 @@ import (
 var Instance *gorm.DB
 
 func Connect(connectionString string) {
-	Instance, dbError := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
+	var dbError error
+	Instance, dbError = gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	if dbError != nil {
 		log.Fatal(dbError)
 		panic("Failed to connect to database")
