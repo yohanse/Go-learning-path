@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var Instance *gorm.DB
+
 func Connect(connectionString string) {
 	Instance, dbError := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	if dbError != nil {
